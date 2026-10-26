@@ -1,4 +1,4 @@
-package com.jwt.tiendaApp.contoller;
++package com.jwt.tiendaApp.contoller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
