@@ -19,6 +19,12 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
 
+    @Column(name = "cliente_id")
+    private  Long cliente_id;
+
+    @Column(name = "product_id")
+    private  Long product_id;
+
     @Column(name = "quantity")
     private  Long quantity;
 
@@ -30,5 +36,8 @@ public class Orders {
     
     @Column(name = "created_at")
     private LocalDateTime created_at;
+
+    @Column(name = "rol_id")
+    private  Long rol_id;
 
 }

@@ -8,7 +8,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.jwt.tiendaApp.service.JwtService;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

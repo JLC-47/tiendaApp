@@ -15,4 +15,17 @@ public enum RoleEnum {
     public  Long getId() {
         return  id;
     }
+
+    public static RoleEnum fromId(Long id){
+        if (id == null) {
+            return null;
+        }
+        for (RoleEnum role : RoleEnum.values()) {
+            if (role.getId().equals(id)) {
+                return  role;
+            }
+        }
+        throw new  IllegalArgumentException("Id del rol no valido: " + id);
+    }  
+
 }

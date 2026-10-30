@@ -27,8 +27,14 @@ public class Products {
     private  Double price;
 
     @Column(name = "stock")
-    private  Long stock;
+    private  Integer stock;
 
+
+    @Column(name = "category_id")
+    private  Long category_id;
+
+    @Column(name = "seller_id")
+    private  Long seller_id;
 
 
 }
