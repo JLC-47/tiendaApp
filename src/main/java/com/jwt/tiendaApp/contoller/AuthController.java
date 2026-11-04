@@ -45,7 +45,7 @@ public class AuthController {
         HttpGlobalResponseDTO<LoginResponseDTO> response = new  HttpGlobalResponseDTO<>();
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setMesssage("Token is invalid");        
+            response.setMessage("Token is invalid");        
         }
 
         String token = authHeader.replace("Bearer ", "");

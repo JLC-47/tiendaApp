@@ -23,10 +23,6 @@ public class AuthService {
     
     private  final UsersRepository usersRepository;
 
-
-    
-
-
     private final PasswordEncoder passwordEncoder;
 
     private  final JwtService jwtService;
@@ -42,12 +38,12 @@ public class AuthService {
 
 
         if (usernameFound.isPresent()) {
-            response.setMesssage("El nombre de ususario ya está en uso.");
+            response.setMessage("El nombre de ususario ya está en uso.");
             return  response;
         }
 
         if (emailFound.isPresent()) {
-            response.setMesssage("El correo de ususario ya está en uso.");
+            response.setMessage("El correo de ususario ya está en uso.");
             return response;
         }
 
@@ -68,7 +64,7 @@ public class AuthService {
         userDTO.setActive(user.getActive());
         userDTO.setRolId(RoleEnum.CLIENTE);
 
-        response.setMesssage("Usuario registrado correctamente");
+        response.setMessage("Usuario registrado correctamente");
         response.setData(userDTO);
         return  response;
 
@@ -81,7 +77,7 @@ public class AuthService {
         Optional<Users> username = usersRepository.findByUsername(request.getUser());
 
         if (username.isEmpty() && email.isEmpty()) {
-            response.setMesssage("Usuario y/o contraseña incorrectos");
+            response.setMessage("Usuario y/o contraseña incorrectos");
             return  response;
         }
 
@@ -94,7 +90,7 @@ public class AuthService {
         }
 
         if (!passwordEncoder.matches(request.getPassword(), userFound.getPassword())) {
-            response.setMesssage("Usuario y/o contraseña incorrectos");
+            response.setMessage("Usuario y/o contraseña incorrectos");
             return  response;
         }
 
@@ -113,7 +109,7 @@ public class AuthService {
         token.setJwt(jwt);
         token.setUser(user);
 
-        response.setMesssage("Iniciio de sesión exitoso");
+        response.setMessage("Iniciio de sesión exitoso");
         response.setData(token);
          
         return response;
@@ -133,7 +129,7 @@ public class AuthService {
         Optional<Users> userFound = usersRepository.findById(tokenId);
 
         if (userFound.isEmpty()) {
-            response.setMesssage("Usuario no encotrado");
+            response.setMessage("Usuario no encotrado");
             return  response;
         }
 
@@ -148,7 +144,7 @@ public class AuthService {
         loginResponse.setUser(user);
 
         response.setData(loginResponse);
-        response.setMesssage("¡Oe, Sociooo! 🔄 Su token estaba más vencido que una empanada de hace tres días, pero fresco, mi sooo, ya le dimos su refrescadita. ¡Quedó más activo que chisme en peluquería! 😂");
+        response.setMessage("¡Oe, Sociooo! 🔄 Su token estaba más vencido que una empanada de hace tres días, pero fresco, mi sooo, ya le dimos su refrescadita. ¡Quedó más activo que chisme en peluquería! 😂");
         return  response;
 
     }
