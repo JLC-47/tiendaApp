@@ -31,10 +31,10 @@ public class Products {
 
 
     @Column(name = "category_id")
-    private  Long category_id;
+    private  Long categoryId;
 
     @Column(name = "seller_id")
-    private  Long seller_id;
+    private  Long sellerId;
 
 
 }

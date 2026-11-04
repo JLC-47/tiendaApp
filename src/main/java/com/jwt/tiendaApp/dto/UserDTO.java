@@ -15,6 +15,6 @@ public class UserDTO {
 
    private Boolean active;
 
-   private  RoleEnum rol;
+   private  RoleEnum rolId;
 
 }

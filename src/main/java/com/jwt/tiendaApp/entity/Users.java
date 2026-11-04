@@ -29,4 +29,7 @@ public class Users {
     @Column(name = "active")
     private Boolean active;
 
+    @Column(name = "rol_id")
+    private  Long rolId;
+
 }

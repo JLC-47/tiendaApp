@@ -20,10 +20,10 @@ public class Orders {
     private  Long id;
 
     @Column(name = "cliente_id")
-    private  Long cliente_id;
+    private  Long clienteId;
 
     @Column(name = "product_id")
-    private  Long product_id;
+    private  Long productId;
 
     @Column(name = "quantity")
     private  Long quantity;
@@ -35,9 +35,7 @@ public class Orders {
     private  String status;
     
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    @Column(name = "rol_id")
-    private  Long rol_id;
 
 }
