@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.productDTO.ProductDTO;
+import com.jwt.tiendaApp.dtos.productDTO.ProductResponseDTO;
 import com.jwt.tiendaApp.entity.Categories;
 import com.jwt.tiendaApp.entity.Products;
 import com.jwt.tiendaApp.entity.Users;
@@ -24,15 +24,15 @@ public class ProductsService {
     private final CategoriesRepository categoriesRepository;
     private final UsersRepository usersRepository;
 
-    public HttpGlobalResponseDTO<List<ProductDTO>> getProducts(Long categoryId) {
-        HttpGlobalResponseDTO<List<ProductDTO>> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<List<ProductResponseDTO>> getProducts(Long categoryId) {
+        HttpGlobalResponseDTO<List<ProductResponseDTO>> response = new HttpGlobalResponseDTO<>();
         List<Products> allProducts = productsRepository.findAll();
-        List<ProductDTO> filteredList = new ArrayList<>();
+        List<ProductResponseDTO> filteredList = new ArrayList<>();
 
         if (categoryId != null) {
             for (Products p : allProducts) {
                 if (p.getCategoryId() != null && p.getCategoryId().equals(categoryId)) {
-                    ProductDTO dto = new ProductDTO();
+                    ProductResponseDTO dto = new ProductResponseDTO();
                     dto.setId(p.getId());
                     dto.setName(p.getName());
                     dto.setDescription(p.getDescription());

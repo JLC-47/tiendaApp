@@ -3,7 +3,7 @@ package com.jwt.tiendaApp.dtos.productDTO;
 import lombok.Data;
 
 @Data
-public class ProductDTO {
+public class ProductResponseDTO {
     private Long id;
     private String name;
     private String description;

@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserResponseDTO;
 import com.jwt.tiendaApp.dtos.authDTO.LoginRequestDTO;
 import com.jwt.tiendaApp.dtos.authDTO.LoginResponseDTO;
 import com.jwt.tiendaApp.dtos.authDTO.RegisterRequestDTO;
@@ -27,9 +27,9 @@ public class AuthService {
     private  final JwtService jwtService;
 
 
-    public HttpGlobalResponseDTO<UserDTO> register(RegisterRequestDTO request){
-        HttpGlobalResponseDTO<UserDTO> response = new  HttpGlobalResponseDTO<>();
-        UserDTO userDTO = new UserDTO();
+    public HttpGlobalResponseDTO<UserResponseDTO> register(RegisterRequestDTO request){
+        HttpGlobalResponseDTO<UserResponseDTO> response = new  HttpGlobalResponseDTO<>();
+        UserResponseDTO userDTO = new UserResponseDTO();
 
         Optional<Users> usernameFound = usersRepository.findByUsername(request.getUsername());
         Optional<Users> emailFound = usersRepository.findByEmail(request.getEmail());
@@ -94,7 +94,7 @@ public class AuthService {
         }
 
 
-        UserDTO user = new UserDTO();
+        UserResponseDTO user = new UserResponseDTO();
         user.setUsername(userFound.getUsername());
         user.setEmail(userFound.getEmail());
         user.setActive(userFound.getActive());
@@ -106,7 +106,7 @@ public class AuthService {
         String jwt = jwtService.generateToken(userFound.getId(), userFound.getUsername(), userFound.getRolId());
         LoginResponseDTO token = new LoginResponseDTO();
         token.setJwt(jwt);
-        token.setUser(user);
+        token.setUser(user);;
 
         response.setMessage("Iniciio de sesión exitoso");
         response.setData(token);
@@ -121,7 +121,7 @@ public class AuthService {
     public  HttpGlobalResponseDTO<LoginResponseDTO> resfreshToken(String token) throws Exception {
         HttpGlobalResponseDTO<LoginResponseDTO> response = new  HttpGlobalResponseDTO<>();
         LoginResponseDTO loginResponse =  new LoginResponseDTO();
-        UserDTO user = new  UserDTO();
+        UserResponseDTO user = new  UserResponseDTO();
         String jwt = jwtService.refreshToken(token);
         Long userId  = jwtService.extractRolId(token);
 

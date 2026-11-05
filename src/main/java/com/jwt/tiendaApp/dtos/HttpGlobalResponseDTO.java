@@ -9,4 +9,6 @@ public class HttpGlobalResponseDTO<T> {
 
     private  T data;
 
+    private  Boolean status;
+
 }

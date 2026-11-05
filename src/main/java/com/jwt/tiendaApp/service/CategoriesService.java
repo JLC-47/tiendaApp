@@ -7,7 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.categoriesDTO.CategoryDTO;
+import com.jwt.tiendaApp.dtos.categoriesDTO.CategoryRequestDTO;
+import com.jwt.tiendaApp.dtos.categoriesDTO.CategoryResponseDTO;
 import com.jwt.tiendaApp.entity.Categories;
 import com.jwt.tiendaApp.entity.Products;
 import com.jwt.tiendaApp.repository.CategoriesRepository;
@@ -22,13 +23,13 @@ public class CategoriesService {
     private final CategoriesRepository categoriesRepository;
     private final ProductsRepository productsRepository;
 
-    public HttpGlobalResponseDTO<List<CategoryDTO>> getAllCategories() {
-        HttpGlobalResponseDTO<List<CategoryDTO>> response = new HttpGlobalResponseDTO<>();
-        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+    public HttpGlobalResponseDTO<List<CategoryResponseDTO>> getAllCategories() {
+        HttpGlobalResponseDTO<List<CategoryResponseDTO>> response = new HttpGlobalResponseDTO<>();
+        List<CategoryResponseDTO> categoryDTOList = new ArrayList<>();
         List<Categories> categories = categoriesRepository.findAll();
 
         for (Categories c : categories) {
-            CategoryDTO dto = new CategoryDTO();
+            CategoryResponseDTO dto = new CategoryResponseDTO();
             dto.setId(c.getId());
             dto.setName(c.getName());
 
@@ -41,8 +42,8 @@ public class CategoriesService {
 
     }
 
-    public HttpGlobalResponseDTO<CategoryDTO> createCategory(Categories category){
-        HttpGlobalResponseDTO<CategoryDTO> response = new  HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<CategoryResponseDTO> createCategory(CategoryRequestDTO category){
+        HttpGlobalResponseDTO<CategoryResponseDTO> response = new  HttpGlobalResponseDTO<>();
 
         Optional<Categories> categoryFound = categoriesRepository.findByName(category.getName());
 
@@ -52,12 +53,13 @@ public class CategoriesService {
             return response;
         }
 
-        Categories saved = categoriesRepository.save(category);
+        
+        Categories categories = new Categories();
+        categories.setName(category.getName());
+        categoriesRepository.save(categories);
 
-        CategoryDTO dto = new CategoryDTO();
-        dto.setId(saved.getId());
-        dto.setName(saved.getName());
-
+        CategoryResponseDTO dto = new CategoryResponseDTO();
+        
         response.setMessage("¡Categoría creada con éxito mi papacho!");
         response.setData(dto);
         return response;
@@ -65,8 +67,8 @@ public class CategoriesService {
 
     }
 
-    public HttpGlobalResponseDTO<CategoryDTO> deleteCategory(Long id) {
-        HttpGlobalResponseDTO<CategoryDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<CategoryResponseDTO> deleteCategory(Long id) {
+        HttpGlobalResponseDTO<CategoryResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Categories> categoryFound = categoriesRepository.findById(id);
 
         if (categoryFound.isEmpty()) {
@@ -88,7 +90,7 @@ public class CategoriesService {
 
         categoriesRepository.delete(category);
 
-        CategoryDTO dto = new CategoryDTO();
+        CategoryResponseDTO dto = new CategoryResponseDTO();
         dto.setId(category.getId());
         dto.setName(category.getName());
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.OrderDTO.OrderDTO;
+import com.jwt.tiendaApp.dtos.OrderDTO.OrderResponseDTO;
 import com.jwt.tiendaApp.entity.Orders;
 import com.jwt.tiendaApp.entity.Products;
 import com.jwt.tiendaApp.entity.Users;
@@ -25,8 +25,8 @@ public class OrdersService {
     private final ProductsRepository productsRepository;
     private final UsersRepository usersRepository;
 
-    public HttpGlobalResponseDTO<OrderDTO> createOrder(Long clientId, Long productId, Integer quantity) {
-        HttpGlobalResponseDTO<OrderDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<OrderResponseDTO> createOrder(Long clientId, Long productId, Integer quantity) {
+        HttpGlobalResponseDTO<OrderResponseDTO> response = new HttpGlobalResponseDTO<>();
 
         Optional<Users> client = usersRepository.findById(clientId);
         Optional<Products> productOpt = productsRepository.findById(productId);
@@ -59,7 +59,7 @@ public class OrdersService {
 
         Orders saved = ordersRepository.save(order);
 
-        OrderDTO dto = new OrderDTO();
+        OrderResponseDTO dto = new OrderResponseDTO();
         dto.setId(saved.getId());
         dto.setClientId(saved.getClientId());
         dto.setProductId(saved.getProductId());
@@ -73,14 +73,14 @@ public class OrdersService {
         return response;
     }
 
-    public HttpGlobalResponseDTO<List<OrderDTO>> getOrdersByClient(Long clientId) {
-        HttpGlobalResponseDTO<List<OrderDTO>> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<List<OrderResponseDTO>> getOrdersByClient(Long clientId) {
+        HttpGlobalResponseDTO<List<OrderResponseDTO>> response = new HttpGlobalResponseDTO<>();
         List<Orders> allOrders = ordersRepository.findAll();
-        List<OrderDTO> clientOrders = new ArrayList<>();
+        List<OrderResponseDTO> clientOrders = new ArrayList<>();
 
         for (Orders o : allOrders) {
             if (o.getClientId() != null && o.getClientId().equals(clientId)) {
-                OrderDTO dto = new OrderDTO();
+                OrderResponseDTO dto = new OrderResponseDTO();
                 dto.setId(o.getId());
                 dto.setClientId(o.getClientId());
                 dto.setProductId(o.getProductId());
@@ -98,17 +98,17 @@ public class OrdersService {
         return response;
     }
 
-    public HttpGlobalResponseDTO<List<OrderDTO>> getOrdersBySeller(Long sellerId) {
-        HttpGlobalResponseDTO<List<OrderDTO>> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<List<OrderResponseDTO>> getOrdersBySeller(Long sellerId) {
+        HttpGlobalResponseDTO<List<OrderResponseDTO>> response = new HttpGlobalResponseDTO<>();
         List<Orders> allOrders = ordersRepository.findAll();
-        List<OrderDTO> sellerSales = new ArrayList<>();
+        List<OrderResponseDTO> sellerSales = new ArrayList<>();
 
         for (Orders o : allOrders) {
             Optional<Products> productOpt = productsRepository.findById(o.getProductId());
             if (productOpt.isPresent() && productOpt.get().getSellerId() != null &&
                 productOpt.get().getSellerId().equals(sellerId)) {
                 
-                OrderDTO dto = new OrderDTO();
+                OrderResponseDTO dto = new OrderResponseDTO();
                 dto.setId(o.getId());
                 dto.setClientId(o.getClientId());
                 dto.setProductId(o.getProductId());
@@ -127,13 +127,13 @@ public class OrdersService {
     }
 
 
-    public HttpGlobalResponseDTO<List<OrderDTO>> getAllOrders() {
-        HttpGlobalResponseDTO<List<OrderDTO>> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<List<OrderResponseDTO>> getAllOrders() {
+        HttpGlobalResponseDTO<List<OrderResponseDTO>> response = new HttpGlobalResponseDTO<>();
         List<Orders> allOrders = ordersRepository.findAll();
-        List<OrderDTO> orderDTOList = new ArrayList<>();
+        List<OrderResponseDTO> orderDTOList = new ArrayList<>();
 
         for (Orders o : allOrders) {
-            OrderDTO dto = new OrderDTO();
+            OrderResponseDTO dto = new OrderResponseDTO();
             dto.setId(o.getId());
             dto.setClientId(o.getClientId());
             dto.setProductId(o.getProductId());
@@ -151,8 +151,8 @@ public class OrdersService {
     }
 
 
-    public HttpGlobalResponseDTO<OrderDTO> updateStatus(Long orderId, String status, Long currentUserId, Integer currentUserRolId) {
-        HttpGlobalResponseDTO<OrderDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<OrderResponseDTO> updateStatus(Long orderId, String status, Long currentUserId, Long currentUserRolId) {
+        HttpGlobalResponseDTO<OrderResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Orders> orderOpt = ordersRepository.findById(orderId);
 
         if (orderOpt.isEmpty()) {
@@ -174,7 +174,7 @@ public class OrdersService {
         order.setStatus(status);
         Orders updated = ordersRepository.save(order);
 
-        OrderDTO dto = new OrderDTO();
+        OrderResponseDTO dto = new OrderResponseDTO();
         dto.setId(updated.getId());
         dto.setClientId(updated.getClientId());
         dto.setProductId(updated.getProductId());
@@ -188,8 +188,8 @@ public class OrdersService {
         return response;
     }
 
-    public HttpGlobalResponseDTO<OrderDTO> cancelOrder(Long orderId, Long clientId) {
-        HttpGlobalResponseDTO<OrderDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<OrderResponseDTO> cancelOrder(Long orderId, Long clientId) {
+        HttpGlobalResponseDTO<OrderResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Orders> orderOpt = ordersRepository.findById(orderId);
 
         if (orderOpt.isEmpty()) {
@@ -221,7 +221,7 @@ public class OrdersService {
         order.setStatus(OrderStatusEnum.CANCELADO.name());
         Orders cancelled = ordersRepository.save(order);
 
-        OrderDTO dto = new OrderDTO();
+        OrderResponseDTO dto = new OrderResponseDTO();
         dto.setId(cancelled.getId());
         dto.setClientId(cancelled.getClientId());
         dto.setProductId(cancelled.getProductId());

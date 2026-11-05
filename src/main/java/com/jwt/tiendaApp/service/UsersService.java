@@ -7,7 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserRequestActiveDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserRequestDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserRequestRolIdDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserResponseDTO;
 import com.jwt.tiendaApp.entity.Roles;
 import com.jwt.tiendaApp.entity.Users;
 import com.jwt.tiendaApp.enums.RoleEnum;
@@ -29,9 +32,9 @@ public class UsersService {
      * @return
      */
 
-    public  HttpGlobalResponseDTO<UserDTO> getMe(Long id) {
-        HttpGlobalResponseDTO<UserDTO> response = new HttpGlobalResponseDTO<>();
-        UserDTO userDTO = new  UserDTO();
+    public  HttpGlobalResponseDTO<UserResponseDTO> getMe(Long id) {
+        HttpGlobalResponseDTO<UserResponseDTO> response = new HttpGlobalResponseDTO<>();
+        UserResponseDTO userDTO = new  UserResponseDTO();
 
         Optional<Users> userFound = usersRepository.findById(id);
 
@@ -60,15 +63,15 @@ public class UsersService {
      * @return
      */
 
-    public HttpGlobalResponseDTO<List<UserDTO>> getUsers() {
-        HttpGlobalResponseDTO<List<UserDTO>> response = new  HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<List<UserResponseDTO>> getUsers() {
+        HttpGlobalResponseDTO<List<UserResponseDTO>> response = new  HttpGlobalResponseDTO<>();
         List<Users> userList = usersRepository.findAll();
 
-        List<UserDTO> userDTOList = new ArrayList<>();
+        List<UserResponseDTO> userDTOList = new ArrayList<>();
         
         
         for (Users users : userList) {
-            UserDTO user = new  UserDTO();
+            UserResponseDTO user = new  UserResponseDTO();
             user.setId(users.getId());
             user.setUsername(users.getUsername());
             user.setEmail(users.getEmail());
@@ -95,20 +98,24 @@ public class UsersService {
      * @return
      */
 
-    public HttpGlobalResponseDTO<UserDTO> createUserByAdmin(String username, String email, String password, Long rolId) {
-        HttpGlobalResponseDTO<UserDTO> response = new HttpGlobalResponseDTO<>();
-
+    public HttpGlobalResponseDTO<UserResponseDTO> createUserByAdmin(UserRequestDTO request) {
+        HttpGlobalResponseDTO<UserResponseDTO> response = new HttpGlobalResponseDTO<>();
+        Optional<Users> usernameFound = usersRepository.findByUsername(request.getUsername());
+        Optional<Users> emailFound = usersRepository.findByEmail(request.getEmail());
         
-        List<Users> allUsers = usersRepository.findAll();
-        for (Users u : allUsers) {
-            if (u.getUsername().equalsIgnoreCase(username) || u.getEmail().equalsIgnoreCase(email)) {
-                response.setMessage("¡Pilas!, el username o el email ya están registrados (409)");
-                response.setData(null);
-                return response;
-            }
+
+
+        if (usernameFound.isPresent()) {
+            response.setMessage("El nombre de ususario ya está en uso.");
+            return  response;
         }
 
-        Optional<Roles> roleOpt = rolesRepository.findById(rolId);
+        if (emailFound.isPresent()) {
+            response.setMessage("El correo de ususario ya está en uso.");
+            return response;
+        }
+
+        Optional<Roles> roleOpt = rolesRepository.findById(request.getRolId());
         if (roleOpt.isEmpty()) {
             response.setMessage("Rol no encontrado (404)");
             response.setData(null);
@@ -116,15 +123,15 @@ public class UsersService {
         }
 
         Users user = new Users();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setActive(true);
-        user.setRolId(rolId);
+        user.setRolId(request.getRolId());
 
         Users saved = usersRepository.save(user);
 
-        UserDTO userDTO = new UserDTO();
+        UserResponseDTO userDTO = new UserResponseDTO();
         userDTO.setId(saved.getId());
         userDTO.setUsername(saved.getUsername());
         userDTO.setEmail(saved.getEmail());
@@ -137,8 +144,8 @@ public class UsersService {
     }
 
 
-    public HttpGlobalResponseDTO<UserDTO> updateRole(Long id, Long rolId) {
-        HttpGlobalResponseDTO<UserDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<UserResponseDTO> updateRole(Long id, UserRequestRolIdDTO request) {
+        HttpGlobalResponseDTO<UserResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Users> userFound = usersRepository.findById(id);
 
         if (userFound.isEmpty()) {
@@ -147,7 +154,7 @@ public class UsersService {
             return response;
         }
 
-        Optional<Roles> roleOpt = rolesRepository.findById(rolId);
+        Optional<Roles> roleOpt = rolesRepository.findById(request.getRolId());
         if (roleOpt.isEmpty()) {
             response.setMessage("Rol no encontrado (404)");
             response.setData(null);
@@ -155,10 +162,10 @@ public class UsersService {
         }
 
         Users user = userFound.get();
-        user.setRolId(rolId);
+        user.setRolId(request.getRolId());
         Users updated = usersRepository.save(user);
 
-        UserDTO userDTO = new UserDTO();
+        UserResponseDTO userDTO = new UserResponseDTO();
         userDTO.setId(updated.getId());
         userDTO.setUsername(updated.getUsername());
         userDTO.setEmail(updated.getEmail());
@@ -170,8 +177,8 @@ public class UsersService {
         return response;
     }
 
-    public HttpGlobalResponseDTO<UserDTO> updateStatus(Long id, boolean active) {
-        HttpGlobalResponseDTO<UserDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<UserResponseDTO> updateStatus(Long id, UserRequestActiveDTO request) {
+        HttpGlobalResponseDTO<UserResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Users> userFound = usersRepository.findById(id);
 
         if (userFound.isEmpty()) {
@@ -181,10 +188,10 @@ public class UsersService {
         }
 
         Users user = userFound.get();
-        user.setActive(active);
+        user.setActive(request.getActive());
         Users updated = usersRepository.save(user);
 
-        UserDTO userDTO = new UserDTO();
+        UserResponseDTO userDTO = new UserResponseDTO();
         userDTO.setId(updated.getId());
         userDTO.setUsername(updated.getUsername());
         userDTO.setEmail(updated.getEmail());

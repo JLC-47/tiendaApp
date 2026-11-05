@@ -1,6 +1,7 @@
 package com.jwt.tiendaApp.dtos.authDTO;
 
-import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+
+import com.jwt.tiendaApp.dtos.UserDTO.UserResponseDTO;
 
 import lombok.Data;
 
@@ -9,6 +10,6 @@ public class LoginResponseDTO {
     
         private  String jwt;
 
-        private UserDTO user;
+        private UserResponseDTO user;
 
 }
