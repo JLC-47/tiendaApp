@@ -5,12 +5,11 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jwt.tiendaApp.dto.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dto.LoginRequestDTO;
-import com.jwt.tiendaApp.dto.LoginResponseDTO;
-import com.jwt.tiendaApp.dto.RegisterRequestDTO;
-import com.jwt.tiendaApp.dto.UserDTO;
-
+import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+import com.jwt.tiendaApp.dtos.authDTO.LoginRequestDTO;
+import com.jwt.tiendaApp.dtos.authDTO.LoginResponseDTO;
+import com.jwt.tiendaApp.dtos.authDTO.RegisterRequestDTO;
 import com.jwt.tiendaApp.entity.Users;
 import com.jwt.tiendaApp.enums.RoleEnum;
 import com.jwt.tiendaApp.repository.UsersRepository;
@@ -51,9 +50,9 @@ public class AuthService {
         Users user = new Users();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setActive(request.getActive());
-        user.setId(RoleEnum.CLIENTE.getId());
+        user.setRolId(RoleEnum.CLIENTE.getId());
 
 
         usersRepository.save(user);
@@ -124,9 +123,9 @@ public class AuthService {
         LoginResponseDTO loginResponse =  new LoginResponseDTO();
         UserDTO user = new  UserDTO();
         String jwt = jwtService.refreshToken(token);
-        Long tokenId = jwtService.extractRolId(token);
+        Long userId  = jwtService.extractRolId(token);
 
-        Optional<Users> userFound = usersRepository.findById(tokenId);
+        Optional<Users> userFound = usersRepository.findById(userId);
 
         if (userFound.isEmpty()) {
             response.setMessage("Usuario no encotrado");
@@ -137,7 +136,7 @@ public class AuthService {
 
         user.setUsername(users.getUsername());
         user.setEmail(users.getEmail());
-        user.setRolId(RoleEnum.fromId(users.getId()));
+        user.setRolId(RoleEnum.fromId(users.getRolId()));
         user.setActive(users.getActive());
 
         loginResponse.setJwt(jwt);

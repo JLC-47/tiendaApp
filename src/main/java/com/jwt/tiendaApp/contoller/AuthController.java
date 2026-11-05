@@ -3,11 +3,11 @@ package com.jwt.tiendaApp.contoller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jwt.tiendaApp.dto.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dto.LoginRequestDTO;
-import com.jwt.tiendaApp.dto.RegisterRequestDTO;
-import com.jwt.tiendaApp.dto.UserDTO;
-import com.jwt.tiendaApp.dto.LoginResponseDTO;
+import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+import com.jwt.tiendaApp.dtos.authDTO.LoginRequestDTO;
+import com.jwt.tiendaApp.dtos.authDTO.LoginResponseDTO;
+import com.jwt.tiendaApp.dtos.authDTO.RegisterRequestDTO;
 import com.jwt.tiendaApp.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;

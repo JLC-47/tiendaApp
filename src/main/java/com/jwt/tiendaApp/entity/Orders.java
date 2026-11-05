@@ -20,13 +20,13 @@ public class Orders {
     private  Long id;
 
     @Column(name = "cliente_id")
-    private  Long clienteId;
+    private  Long clientId;
 
     @Column(name = "product_id")
     private  Long productId;
 
     @Column(name = "quantity")
-    private  Long quantity;
+    private  Integer quantity;
 
     @Column(name = "total")
     private  Double total;

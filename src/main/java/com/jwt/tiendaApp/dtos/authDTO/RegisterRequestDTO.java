@@ -1,4 +1,4 @@
-package com.jwt.tiendaApp.dto;
+package com.jwt.tiendaApp.dtos.authDTO;
 
 import lombok.Data;
 

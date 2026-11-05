@@ -1,0 +1,17 @@
+package com.jwt.tiendaApp.dtos.OrderDTO;
+
+
+import java.time.LocalDateTime;
+
+import lombok.Data;
+
+@Data 
+public class OrderDTO {
+    private Long id;
+    private Long clientId;
+    private Long productId;
+    private Integer quantity;
+    private Double total;
+    private String status;
+    private LocalDateTime createdAt;
+}
