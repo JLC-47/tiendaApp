@@ -7,14 +7,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
+import com.jwt.tiendaApp.dtos.productDTO.ProductRequestDTO;
 import com.jwt.tiendaApp.dtos.productDTO.ProductResponseDTO;
 import com.jwt.tiendaApp.entity.Categories;
 import com.jwt.tiendaApp.entity.Products;
-import com.jwt.tiendaApp.entity.Users;
+
 import com.jwt.tiendaApp.repository.CategoriesRepository;
 import com.jwt.tiendaApp.repository.ProductsRepository;
-import com.jwt.tiendaApp.repository.UsersRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,51 +23,61 @@ import lombok.RequiredArgsConstructor;
 public class ProductsService {
     private final ProductsRepository productsRepository;
     private final CategoriesRepository categoriesRepository;
-    private final UsersRepository usersRepository;
 
     public HttpGlobalResponseDTO<List<ProductResponseDTO>> getProducts(Long categoryId) {
         HttpGlobalResponseDTO<List<ProductResponseDTO>> response = new HttpGlobalResponseDTO<>();
-        List<Products> allProducts = productsRepository.findAll();
-        List<ProductResponseDTO> filteredList = new ArrayList<>();
+        List<ProductResponseDTO> result = new ArrayList<>();
 
         if (categoryId != null) {
-            for (Products p : allProducts) {
-                if (p.getCategoryId() != null && p.getCategoryId().equals(categoryId)) {
-                    ProductResponseDTO dto = new ProductResponseDTO();
-                    dto.setId(p.getId());
-                    dto.setName(p.getName());
-                    dto.setDescription(p.getDescription());
-                    dto.setPrice(p.getPrice());
-                    dto.setStock(p.getStock());
-                    dto.setCategoryId(p.getCategoryId());
-                    dto.setSellerId(p.getSellerId());
+            List<Products> filtered = productsRepository.findByCategoryId(categoryId);
 
-                    filteredList.add(dto);
-                }
+            for (Products p : filtered) {
+                ProductResponseDTO dto = new ProductResponseDTO();
+                dto.setId(p.getId());
+                dto.setName(p.getName());
+                dto.setDescription(p.getDescription());
+                dto.setPrice(p.getPrice());
+                dto.setStock(p.getStock());
+                dto.setCategoryId(p.getCategoryId());
+                dto.setSellerId(p.getSellerId());
+                result.add(dto);
             }
             response.setMessage("Catálogo filtrado por categoría 🛒");
 
         } else {
-            response.setMessage("¡Mirá el catálogo de productos disponible! 🛒");
+            List<Products> allProducts = productsRepository.findAll();
 
+            for (Products p : allProducts) {
+                ProductResponseDTO dto = new ProductResponseDTO();
+                dto.setId(p.getId());
+                dto.setName(p.getName());
+                dto.setDescription(p.getDescription());
+                dto.setPrice(p.getPrice());
+                dto.setStock(p.getStock());
+                dto.setCategoryId(p.getCategoryId());
+                dto.setSellerId(p.getSellerId());
+                result.add(dto);
+            }
+            response.setMessage("¡Catálogo de productos! 🛒");
         }
-        response.setData(filteredList);
-        return response;
 
+        response.setData(result);
+        response.setStatus(true);
+        return response;
     }
 
-    public HttpGlobalResponseDTO<ProductDTO> getProductId(Long id) {
-        HttpGlobalResponseDTO<ProductDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<ProductResponseDTO> getProductId(Long id) {
+        HttpGlobalResponseDTO<ProductResponseDTO> response = new HttpGlobalResponseDTO<>();
         Optional<Products> productFound = productsRepository.findById(id);
 
         if (productFound.isEmpty()) {
-            response.setMessage("Producto no encontrado (404)");
+            response.setMessage("¡Pedido no encontrado mi llave! (404)");
             response.setData(null);
             return response;
         }
 
         Products p = productFound.get();
-        ProductDTO dto = new ProductDTO();
+        ProductResponseDTO dto = new ProductResponseDTO();
         dto.setId(p.getId());
         dto.setName(p.getName());
         dto.setDescription(p.getDescription());
@@ -77,53 +88,61 @@ public class ProductsService {
 
         response.setMessage("¡Aquí tienes el detalle del producto!");
         response.setData(dto);
+        response.setStatus(true);
         return response;
 
     }
 
-    public HttpGlobalResponseDTO<List<ProductDTO>> getProductsBySeller(Long sellerId) {
-        HttpGlobalResponseDTO<List<ProductDTO>> response = new HttpGlobalResponseDTO<>();
-        List<Products> allProducts = productsRepository.findAll();
-        List<ProductDTO> sellerProducts = new ArrayList<>();
+    public HttpGlobalResponseDTO<List<ProductResponseDTO>> getMyProducts(HttpServletRequest request) {
+        HttpGlobalResponseDTO<List<ProductResponseDTO>> response = new HttpGlobalResponseDTO<>();
+
+        Long sellerId = (Long) request.getAttribute("userId");
+
+        List<Products> allProducts = productsRepository.findBySellerId(sellerId);
+        List<ProductResponseDTO> sellerProducts = new ArrayList<>();
 
         for (Products p : allProducts) {
-            if (p.getSellerId() != null && p.getSellerId().equals(sellerId)) {
-                ProductDTO dto = new ProductDTO();
-                dto.setId(p.getId());
-                dto.setName(p.getName());
-                dto.setDescription(p.getDescription());
-                dto.setPrice(p.getPrice());
-                dto.setStock(p.getStock());
-                dto.setCategoryId(p.getCategoryId());
-                dto.setSellerId(p.getSellerId());
-
-                sellerProducts.add(dto);
-            }
+            ProductResponseDTO dto = new ProductResponseDTO();
+            dto.setId(p.getId());
+            dto.setName(p.getName());
+            dto.setDescription(p.getDescription());
+            dto.setPrice(p.getPrice());
+            dto.setStock(p.getStock());
+            dto.setCategoryId(p.getCategoryId());
+            dto.setSellerId(p.getSellerId());
+            sellerProducts.add(dto);
         }
+
         response.setMessage("Tus productos publicados mi pana:");
         response.setData(sellerProducts);
+        response.setStatus(true);
         return response;
-
     }
 
-    public HttpGlobalResponseDTO<ProductDTO> createProduct(Products product, Long categoryId, Long sellerId) {
-        HttpGlobalResponseDTO<ProductDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<ProductResponseDTO> createProduct(ProductRequestDTO body, HttpServletRequest request) {
+        HttpGlobalResponseDTO<ProductResponseDTO> response = new HttpGlobalResponseDTO<>();
 
-        Optional<Categories> category = categoriesRepository.findById(categoryId);
-        Optional<Users> seller = usersRepository.findById(sellerId);
+        Long sellerId = (Long) request.getAttribute("userId");
 
-        if (category.isEmpty() || seller.isEmpty()) {
-            response.setMessage("Categoría o vendedor no encontrados");
+        Optional<Categories> category = categoriesRepository.findById(body.getCategoryId());
+
+        if (category.isEmpty()) {
+            response.setMessage("Categoría no encontrada");
             response.setData(null);
             return response;
         }
 
-        product.setCategoryId(categoryId);
+        Products product = new Products();
+        product.setName(body.getName());
+        product.setDescription(body.getDescription());
+        product.setPrice(body.getPrice());
+        product.setStock(body.getStock());
+        product.setCategoryId(body.getCategoryId());
         product.setSellerId(sellerId);
 
         Products saved = productsRepository.save(product);
 
-        ProductDTO dto = new ProductDTO();
+        ProductResponseDTO dto = new ProductResponseDTO();
         dto.setId(saved.getId());
         dto.setName(saved.getName());
         dto.setDescription(saved.getDescription());
@@ -134,13 +153,17 @@ public class ProductsService {
 
         response.setMessage("¡Producto creado con toda! 🔥");
         response.setData(dto);
+        response.setStatus(true);
         return response;
-
     }
 
-    public HttpGlobalResponseDTO<ProductDTO> updateProduct(Long id, Products newData, Long currentUserId,
-            Long currentUserRolId) {
-        HttpGlobalResponseDTO<ProductDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO body,
+            HttpServletRequest request) {
+        HttpGlobalResponseDTO<ProductResponseDTO> response = new HttpGlobalResponseDTO<>();
+
+        Long currentUserId = (Long) request.getAttribute("userId");
+        Long currentUserRolId = (Long) request.getAttribute("rolId");
+
         Optional<Products> productFound = productsRepository.findById(id);
 
         if (productFound.isEmpty()) {
@@ -152,19 +175,20 @@ public class ProductsService {
         Products product = productFound.get();
 
         if (currentUserRolId == 3 && !product.getSellerId().equals(currentUserId)) {
-            response.setMessage("¡Alto ahí!, ese producto no es tuyo, acceso denegado (403)");
+            response.setMessage("¡Alto ahí!, ese producto no es tuyo (403)");
             response.setData(null);
+        response.setStatus(true);
             return response;
         }
 
-        product.setName(newData.getName());
-        product.setDescription(newData.getDescription());
-        product.setPrice(newData.getPrice());
-        product.setStock(newData.getStock());
+        product.setName(body.getName());
+        product.setDescription(body.getDescription());
+        product.setPrice(body.getPrice());
+        product.setStock(body.getStock());
 
         Products updated = productsRepository.save(product);
 
-        ProductDTO dto = new ProductDTO();
+        ProductResponseDTO dto = new ProductResponseDTO();
         dto.setId(updated.getId());
         dto.setName(updated.getName());
         dto.setDescription(updated.getDescription());
@@ -175,12 +199,16 @@ public class ProductsService {
 
         response.setMessage("¡Producto actualizado con éxito!");
         response.setData(dto);
+        response.setStatus(true);
         return response;
-
     }
 
-    public  HttpGlobalResponseDTO<ProductDTO> deleteProduct(Long id, Long currentUserId, Long currentUserRolId) {
-        HttpGlobalResponseDTO<ProductDTO> response = new HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<ProductResponseDTO> deleteProduct(Long id, HttpServletRequest request) {
+        HttpGlobalResponseDTO<ProductResponseDTO> response = new HttpGlobalResponseDTO<>();
+
+        Long currentUserId = (Long) request.getAttribute("userId");
+        Long currentUserRolId = (Long) request.getAttribute("rolId");
+
         Optional<Products> productFound = productsRepository.findById(id);
 
         if (productFound.isEmpty()) {
@@ -199,7 +227,7 @@ public class ProductsService {
 
         productsRepository.delete(product);
 
-        ProductDTO dto = new ProductDTO();
+        ProductResponseDTO dto = new ProductResponseDTO();
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
@@ -210,8 +238,8 @@ public class ProductsService {
 
         response.setMessage("¡Producto eliminado correctamente!");
         response.setData(dto);
+        response.setStatus(true);
         return response;
-
     }
 
 }

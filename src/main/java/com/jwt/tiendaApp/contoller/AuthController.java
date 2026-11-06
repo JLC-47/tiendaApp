@@ -4,60 +4,59 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwt.tiendaApp.dtos.HttpGlobalResponseDTO;
-import com.jwt.tiendaApp.dtos.UserDTO.UserDTO;
+import com.jwt.tiendaApp.dtos.UserDTO.UserResponseDTO;
 import com.jwt.tiendaApp.dtos.authDTO.LoginRequestDTO;
 import com.jwt.tiendaApp.dtos.authDTO.LoginResponseDTO;
 import com.jwt.tiendaApp.dtos.authDTO.RegisterRequestDTO;
 import com.jwt.tiendaApp.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-@RestController 
+@RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class AuthController {
-    
-    private  final AuthService authService;
+
+    private final AuthService authService;
 
     @PostMapping("register")
-    public HttpGlobalResponseDTO<UserDTO> register(@RequestBody RegisterRequestDTO request) {
-        HttpGlobalResponseDTO<UserDTO> response = authService.register(request);
-
-        return response;
+    public ResponseEntity<HttpGlobalResponseDTO<UserResponseDTO>> register(
+            @Valid @RequestBody RegisterRequestDTO request) {
+        return ResponseEntity.status(201).body(authService.register(request));
     }
-
 
     @PostMapping("login")
-    public HttpGlobalResponseDTO<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
-        HttpGlobalResponseDTO<LoginResponseDTO> response = authService.login(request);
-
-        return response;
+    public ResponseEntity<HttpGlobalResponseDTO<LoginResponseDTO>> login(
+            @Valid @RequestBody LoginRequestDTO request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
-
     @PostMapping("refreshtoken")
-    public HttpGlobalResponseDTO<LoginResponseDTO> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<HttpGlobalResponseDTO<LoginResponseDTO>> refreshToken(
+            HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        HttpGlobalResponseDTO<LoginResponseDTO> response = new  HttpGlobalResponseDTO<>();
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setMessage("Token is invalid");        
+            HttpGlobalResponseDTO<LoginResponseDTO> response = new HttpGlobalResponseDTO<>();
+            response.setMessage("Token inválido o ausente (401)");
+            return ResponseEntity.status(401).body(response);
         }
 
         String token = authHeader.replace("Bearer ", "");
 
-        response = authService.resfreshToken(token);
-
-
-        return response;
+        try {
+            return ResponseEntity.ok(authService.refreshToken(token));
+        } catch (Exception e) {
+            HttpGlobalResponseDTO<LoginResponseDTO> response = new HttpGlobalResponseDTO<>();
+            response.setMessage("Token inválido o expirado (401)");
+            return ResponseEntity.status(401).body(response);
+        }
     }
-
-
-    
-    
 
 }

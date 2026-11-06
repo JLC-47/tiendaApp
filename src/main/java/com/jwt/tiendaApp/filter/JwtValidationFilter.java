@@ -30,7 +30,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.replace("Bearer", "");
+        String token = authHeader.replace("Bearer ", "");
 
         try {
 
@@ -65,8 +65,21 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @Override 
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+    String method = request.getMethod();
 
-        return path.startsWith("/api/v1/users/auth/");
+    boolean isAuth = path.startsWith("/api/v1/tienda/auth/");
+
+    boolean isCatalog =
+            path.equals("/api/v1/tienda/products")
+            && method.equals("GET");
+
+    boolean isDetail =
+            path.matches("/api/v1/tienda/products/\\d+")
+            && method.equals("GET");
+
+
+
+    return isAuth || isCatalog || isDetail;
     }
 
 }

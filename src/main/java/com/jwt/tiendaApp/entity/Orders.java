@@ -19,7 +19,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
 
-    @Column(name = "cliente_id")
+    @Column(name = "client_id")
     private  Long clientId;
 
     @Column(name = "product_id")
@@ -35,7 +35,7 @@ public class Orders {
     private  String status;
     
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 
 }

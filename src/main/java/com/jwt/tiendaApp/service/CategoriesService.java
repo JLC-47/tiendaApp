@@ -42,8 +42,8 @@ public class CategoriesService {
 
     }
 
-    public HttpGlobalResponseDTO<CategoryResponseDTO> createCategory(CategoryRequestDTO category){
-        HttpGlobalResponseDTO<CategoryResponseDTO> response = new  HttpGlobalResponseDTO<>();
+    public HttpGlobalResponseDTO<CategoryResponseDTO> createCategory(CategoryRequestDTO category) {
+        HttpGlobalResponseDTO<CategoryResponseDTO> response = new HttpGlobalResponseDTO<>();
 
         Optional<Categories> categoryFound = categoriesRepository.findByName(category.getName());
 
@@ -53,22 +53,22 @@ public class CategoriesService {
             return response;
         }
 
-        
-        Categories categories = new Categories();
-        categories.setName(category.getName());
-        categoriesRepository.save(categories);
+        Categories newCategory = new Categories();
+        newCategory.setName(category.getName());
+        Categories saved = categoriesRepository.save(newCategory);
 
         CategoryResponseDTO dto = new CategoryResponseDTO();
-        
+        dto.setId(saved.getId());
+        dto.setName(saved.getName());
+
         response.setMessage("¡Categoría creada con éxito mi papacho!");
         response.setData(dto);
         return response;
-
-
     }
 
     public HttpGlobalResponseDTO<CategoryResponseDTO> deleteCategory(Long id) {
         HttpGlobalResponseDTO<CategoryResponseDTO> response = new HttpGlobalResponseDTO<>();
+
         Optional<Categories> categoryFound = categoriesRepository.findById(id);
 
         if (categoryFound.isEmpty()) {
@@ -77,17 +77,15 @@ public class CategoriesService {
             return response;
         }
 
-        Categories category = categoryFound.get();
+        List<Products> products = productsRepository.findByCategoryId(id);
 
-        List<Products> allProducts = productsRepository.findAll();
-        for (Products p : allProducts) {
-            if (p.getCategoryId() != null && p.getCategoryId().equals(id)) {
-                response.setMessage("¡Pilas!, no puedes borrar esta categoría porque tiene productos asociados (409)");
-                response.setData(null);
-                return response;
-            }
+        if (!products.isEmpty()) {
+            response.setMessage("¡Pilas!, no puedes borrar esta categoría porque tiene productos asociados (409)");
+            response.setData(null);
+            return response;
         }
 
+        Categories category = categoryFound.get();
         categoriesRepository.delete(category);
 
         CategoryResponseDTO dto = new CategoryResponseDTO();
@@ -97,7 +95,6 @@ public class CategoriesService {
         response.setMessage("¡Categoría borrada con éxito!");
         response.setData(dto);
         return response;
-
     }
 
 }

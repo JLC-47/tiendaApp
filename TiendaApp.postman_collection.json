@@ -1,0 +1,946 @@
+{
+  "info": {
+    "_postman_id": "aa26ceec-a58c-4557-8b7a-4bd3ae29ddda",
+    "name": "TiendaApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54518950"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"nuevoUsuario\",\r\n  \"email\": \"nuevo@correo.com\",\r\n  \"password\": \"123456\",\r\n  \"active\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user\": \"nuevoUsuario\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refreshToken",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0s4w}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/auth/refreshtoken",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "auth",
+                "refreshtoken"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "LoginAdmin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();\r\npm.environment.set(\"token\", json.data.jwt);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user\": \"admin2\",\r\n  \"password\": \"string1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0z80}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/users/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getUsers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_03w0}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CreateUser",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_03w0}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"vendedor3\",\r\n  \"email\": \"vendedor1@tienda.com\",\r\n  \"password\": \"123456\",\r\n  \"active\": true,\r\n  \"rolId\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateRol",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_03w0}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"rolId\": 1 }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/users/1/role",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "users",
+                "1",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateStatus",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0lcf}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"active\": false }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/users/1/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "users",
+                "1",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "GetAllCategories",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0lcf}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CreateCategory",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0lcf}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Deportes\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteCategory",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0w5h}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/categories/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "categories",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "GetProducts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetProduct",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products?categoryId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mine",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_15ig}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products/mine",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products",
+                "mine"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_15ig}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Audífonos Sony\",\r\n  \"description\": \"Bluetooth con cancelación de ruido\",\r\n  \"price\": 350000,\r\n  \"stock\": 8,\r\n  \"categoryId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_15ig}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Audífonos Sony Pro\",\r\n  \"description\": \"Versión actualizada\",\r\n  \"price\": 400000,\r\n  \"stock\": 5,\r\n  \"categoryId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_15ig}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/products/4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "products",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_046u}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"productId\": 1,\r\n  \"quantity\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "mine",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_046u}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders/mine",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders",
+                "mine"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sales",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yky}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders/sales",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders",
+                "sales"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AllOrders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0drv}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0e6v}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"ENVIADO\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders/1/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders",
+                "1",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "cancel",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0ycj}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9090/api/v1/tienda/orders/1/cancel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9090",
+              "path": [
+                "api",
+                "v1",
+                "tienda",
+                "orders",
+                "1",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0s4w",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0z80",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_03w0",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0lcf",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0w5h",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_15ig",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_046u",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0yky",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0drv",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0e6v",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0ycj",
+      "secret": true
+    }
+  ]
+}
